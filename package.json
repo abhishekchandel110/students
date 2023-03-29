@@ -1,0 +1,19 @@
+{
+  "name": "students",
+  "version": "0.1.0",
+  "description": "An API to manage students",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abhishekchandel110/students.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/abhishekchandel110/students/issues"
+  },
+  "homepage": "https://github.com/abhishekchandel110/students#readme"
+}
