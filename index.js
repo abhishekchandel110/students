@@ -30,7 +30,6 @@ app.delete("/",function(req,res){
         if(db[i].name===req.body.name){
             db.splice(i, 1)
         }
-        
     }
 
 })
