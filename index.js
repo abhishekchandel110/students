@@ -35,10 +35,9 @@ app.post("/", async function(req, res){
     const name = req.body.name;
     const age = req.body.age;
 
-    if(age < 0 && age > 100){
-        return res.json({"error": "correct age"})
+    if(age < 0 || age > 100){
+        return res.json({"error": "age can not correct age"})
     }
-
     try{
         const added = await Students.create({
             name: req.body.name,
