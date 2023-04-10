@@ -16,8 +16,8 @@ app.get("/", async function(req, res){
      
     
    try {
-        const students = await Students.find({})
-        res.send(students)
+        const student = await Students.find({})
+        res.send(student)
    } catch(e) {
         console.log("Error" , e.message);
    }
@@ -34,9 +34,7 @@ app.get("/:id", async function(req, res){
 
 app.post("/", async function(req, res){
     
-    const age = req.body.age
-
-   
+    const age = req.body.age;
 
     if(age < 0 ){
         return res.json({"error": "age cannot be smaller then zero "})
@@ -44,14 +42,12 @@ app.post("/", async function(req, res){
     if(age > 100){
         return res.json ({"error": "age cannot be biger then 100"})
     }
-
-
      try{
-        const students = await Students.create({
+        const student = await Students.create({
             name: req.body.name,
             age: req.body.age
         })
-        res.send(students)
+        res.send(student)
      } catch(e) {
         console.log("Error" , e.message);
    }
@@ -78,9 +74,9 @@ app.delete("/:id", async function(req,res){
     } catch(e){
         console.log(e);
     }
-   
-
 })
+
+
 app.listen(8000 , function(){
     console.log("start");
 })
