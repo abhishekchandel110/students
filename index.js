@@ -1,42 +1,86 @@
 const express = require("express")
 const bodyparser = require("body-parser")
+const mongoose = require("mongoose")
+const Students = require("./student.js")
+// const username = "kanhaiyapatidar94"
+// const password = "kp@12345"
+
+mongoose.connect(process.env.CONNECTION_STRING)
+
 const app = express()
-app.use(bodyparser.json())
+app.use(bodyparser.urlencoded({extended:false}))
 
-const db = []
 
-app.get("/", function(req, res){
-    res.send(db)
-    console.log(db)
+
+app.get("/", async function(req, res){
+     
+    
+   try {
+        const students = await Students.find({})
+        res.send(students)
+   } catch(e) {
+        console.log("Error" , e.message);
+   }
 })
 
-app.post("/", function(req, res){
-    db.push(req.body)
-    res.send(req.body.name + req.body.age)
-})
 
-app.put("/",function(req,res){
-    for(let i = 0; i<db.length; i++){
-        if(db[i].name===req.body.name){
-            db[i].age=req.body.age
-        }
+app.get("/:id", async function(req, res){
+    const id = req.params.id
+    const student = await Students.find({ _id: id })
+         res.send(student)
+ })
+
+
+
+app.post("/", async function(req, res){
+    
+    const age = req.body.age
+
+   
+
+    if(age < 0 ){
+        return res.json({"error": "age cannot be smaller then zero "})
     }
-    res.send("Saved your update")
-})
-
-app.delete("/",function(req,res){
-    for(let i = 0; i<db.length; i++){
-        if(db[i].name===req.body.name){
-            db.splice(i, 1)
-        }
+    if(age > 100){
+        return res.json ({"error": "age cannot be biger then 100"})
     }
 
+
+     try{
+        const students = await Students.create({
+            name: req.body.name,
+            age: req.body.age
+        })
+        res.send(students)
+     } catch(e) {
+        console.log("Error" , e.message);
+   }
 })
 
+app.put("/:id", async function(req,res){
+    
+    try{
+    const id = req.params.id
+    const student = await Students.findOne({ _id: id})
+    student.name = req.body.name  
+    await student.save()
+    res.json({"message": "success"})
+    } catch (e){
+        console.log(e);
+    }
+})
 
+app.delete("/:id", async function(req,res){
+    try{
+        const id = req.params.id
+        const student = await Students.deleteOne({_id: id})
+        res.send(student)
+    } catch(e){
+        console.log(e);
+    }
+   
+
+})
 app.listen(8000 , function(){
     console.log("start");
 })
-
-
-
