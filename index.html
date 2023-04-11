@@ -1,15 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FORM</title>
+    <style>
+        table,
+        th,
+        td {
+            border: 1px solid;
+        }
+
+        table {
+            width: 100%;
+        }
+        input {
+            width: 50%;
+            height: 30px;
+            margin: 10px;
+            padding: 10px;
+        }
+    </style>
 </head>
+
 <body>
     <form action="http://localhost:8000" method="post">
         <input type="text" name="name">
         <input type="number" name="age" id="">
-        <input type="submit">
+        <input type="submit" name="add" >
     </form>
+
+    
+    <script>
+        window.onload = async function () {
+            const data = await fetch("http://localhost:8000")
+            const result = await data.json()
+            console.log(result)
+            const table = document.createElement("table")
+            const thead = document.createElement("thead")
+            const tbody = document.createElement("tbody")
+            const rows = document.createElement("tr")
+                const id = document.createElement("th")
+                const name = document.createElement("th")
+                const age = document.createElement("th")
+                id.textContent = "ID"
+                name.textContent = "NAME"
+                age.textContent = "AGE"
+                rows.appendChild(id)
+                rows.appendChild(name)
+                rows.appendChild(age)
+                thead.appendChild(rows)
+            for (let i = 0; i < result.length; i++) {
+                const row = document.createElement("tr")
+                const id = document.createElement("td")
+                const name = document.createElement("td")
+                const age = document.createElement("td")
+                id.textContent = result[i]._id
+                name.textContent = result[i].name
+                age.textContent = result[i].age
+                row.appendChild(id)
+                row.appendChild(name)
+                row.appendChild(age)
+                tbody.appendChild(row)
+                console.log(row)
+            }
+            table.appendChild(tbody)
+            table.appendChild(thead)
+            document.body.appendChild(table)
+        }
+    </script>
+
 </body>
+
 </html>
