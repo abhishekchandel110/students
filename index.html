@@ -6,9 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FORM</title>
     <style>
-        table,
-        th,
-        td {
+        table,th,td {
             border: 1px solid;
         }
 
@@ -25,18 +23,57 @@
 </head>
 
 <body>
-    <form action="http://localhost:8000" method="post">
+    <button onclick="ClickAble()">add student</button>
+    <div id="box">  
+         <form action="http://localhost:8000" method="post" id="forms">
         <input type="text" name="name">
-        <input type="number" name="age" id="">
-        <input type="submit" name="add" >
+        <input type="number" name="age">
+        <input type="submit" name="add">
+        
     </form>
+    <button onclick="Cancel()">cancel</button>
+</div>
+ 
 
     
     <script>
+        function ClickAble() {
+            const box =document.getElementById("box")
+            box.style.display="block"
+        }
+        function Cancel() {
+            const box =document.getElementById("box")
+            box.style.display="none"
+        }
+
+        const form=document.getElementById("forms")
+        form.addEventListener("submit",async function(e){
+            e.preventDefault()
+            const inputs =document.getElementsByTagName("input")
+            const nameInput =inputs[0]
+            const ageInput =inputs[1]
+            try{
+                const res=await fetch('http://localhost:8000',{
+                    method:"POST",
+                    body: JSON.stringify({
+                        name:nameInput.value,
+                        age:ageInput.value
+
+                    })
+                })
+                const result=await res.json()
+                console.log(result)
+            }
+            catch(e){
+                console.log(e)
+            }
+            
+        })
+
+
         window.onload = async function () {
             const data = await fetch("http://localhost:8000")
             const result = await data.json()
-            console.log(result)
             const table = document.createElement("table")
             const thead = document.createElement("thead")
             const tbody = document.createElement("tbody")
