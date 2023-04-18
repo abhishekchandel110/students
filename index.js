@@ -12,9 +12,8 @@ mongoose.connect(process.env.CONNECTION_STRING)
 
 const app = express()
 app.use(bodyparser.urlencoded({extended:false}))
+app.use(bodyparser.json())
 app.use(cors())
-
-
 
 app.get("/", async function(req, res){
      
@@ -30,26 +29,33 @@ app.get("/", async function(req, res){
 
 app.get("/:id", async function(req, res){
     const id = req.params.id
+    
+    if (id === "favicon.ico") {
+        return 
+    }
+
     const student = await Students.find({ _id: id })
-         res.send(student)
+    res.send(student)
  })
 
 
 
 app.post("/", async function(req, res){
-    
-    const age = req.body.age;
 
+    const age = req.body.age;
     if(age < 0 ){
         return res.json({"error": "age cannot be smaller then zero "})
     }
     if(age > 100){
         return res.json ({"error": "age cannot be biger then 100"})
     }
+    console.log(req.body)
      try{
         const student = await Students.create({
             name: req.body.name,
-            age: req.body.age
+            age: req.body.age,
+            img: req.body.img,
+            imgs: req.body.imgs
         })
         res.send(student)
      } catch(e) {
@@ -63,6 +69,7 @@ app.put("/:id", async function(req,res){
     const id = req.params.id
     const student = await Students.findOne({ _id: id})
     student.name = req.body.name  
+    student.age = req.body.age  
     await student.save()
     res.json({"message": "success"})
     } catch (e){

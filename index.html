@@ -6,99 +6,183 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FORM</title>
     <style>
-        table,th,td {
+        #main {
+            display: none;
+        }
+
+        table,
+        th,
+        td {
             border: 1px solid;
         }
 
         table {
             width: 100%;
         }
+
         input {
             width: 50%;
             height: 30px;
             margin: 10px;
             padding: 10px;
         }
+
+
+
+        .editbutton {
+            background: url(./update_icon.jpg);
+            background-size: fit;
+            width: 20px;
+            height: 20px;
+            background-position: center;
+            background-size: contain;
+            background-color: white;
+            border: none;
+            margin: 18px;
+            padding: 6px;
+        }
+
+        .deletebtn {
+            background: url(./delete_con.jpg);
+            background-size: fit;
+            width: 20px;
+            height: 20px;
+            background-position: center;
+            background-size: contain;
+            background-color: white;
+            border: none;
+            margin: 18px;
+            padding: 6px;
+        }
     </style>
 </head>
 
 <body>
-    <button onclick="ClickAble()">add student</button>
-    <div id="box">  
-         <form action="http://localhost:8000" method="post" id="forms">
-        <input type="text" name="name">
-        <input type="number" name="age">
-        <input type="submit" name="add">
-        
-    </form>
-    <button onclick="Cancel()">cancel</button>
-</div>
- 
 
-    
+    <div>
+        <button onclick="Clickeble()">add new student</button>
+        <div id="main">
+            <form action="http://localhost:8000" method="post" id="form">
+                <input type="text" name="name" id="name">
+                <input type="number" name="age" id="age">
+                <input type="submit" name="save">
+            </form>
+            <button onclick="cancel()" id="cancelbtn">Cancel</button>
+        </div>
+
+    </div>
+
     <script>
-        function ClickAble() {
-            const box =document.getElementById("box")
-            box.style.display="block"
-        }
-        function Cancel() {
-            const box =document.getElementById("box")
-            box.style.display="none"
-        }
 
-        const form=document.getElementById("forms")
-        form.addEventListener("submit",async function(e){
-            e.preventDefault()
-            const inputs =document.getElementsByTagName("input")
-            const nameInput =inputs[0]
-            const ageInput =inputs[1]
-            try{
-                const res=await fetch('http://localhost:8000',{
-                    method:"POST",
-                    body: JSON.stringify({
-                        name:nameInput.value,
-                        age:ageInput.value
-
-                    })
-                })
-                const result=await res.json()
-                console.log(result)
-            }
-            catch(e){
-                console.log(e)
-            }
-            
-        })
 
 
         window.onload = async function () {
             const data = await fetch("http://localhost:8000")
             const result = await data.json()
+
+            console.log(result)
             const table = document.createElement("table")
             const thead = document.createElement("thead")
             const tbody = document.createElement("tbody")
             const rows = document.createElement("tr")
-                const id = document.createElement("th")
-                const name = document.createElement("th")
-                const age = document.createElement("th")
-                id.textContent = "ID"
-                name.textContent = "NAME"
-                age.textContent = "AGE"
-                rows.appendChild(id)
-                rows.appendChild(name)
-                rows.appendChild(age)
-                thead.appendChild(rows)
+            const id = document.createElement("th")
+            const name = document.createElement("th")
+            const age = document.createElement("th")
+            const icon = document.createElement("th")
+            id.textContent = "ID"
+            name.textContent = "NAME"
+            age.textContent = "AGE"
+            icon.textContent = "UPDATE-DELETE"
+            rows.appendChild(id)
+            rows.appendChild(name)
+            rows.appendChild(age)
+            rows.appendChild(icon)
+            thead.appendChild(rows)
             for (let i = 0; i < result.length; i++) {
                 const row = document.createElement("tr")
                 const id = document.createElement("td")
                 const name = document.createElement("td")
                 const age = document.createElement("td")
+
+
+                // update/edit 
+                
+                const updateBtn = document.createElement("button")
+                updateBtn.className = "editbutton"
+
+                updateBtn.addEventListener("click", async function click() {
+                    // Get the student object
+                    const student = result[i]
+
+                    // Get the references to the inputs in the form
+                    const inputs = form.getElementsByTagName("input")
+                    const nameInput = inputs[0]
+                    const ageInput = inputs[1]
+                    nameInput.value = student.name;
+                    ageInput.value = student.age;
+                    
+                    try {
+                        const response = await fetch(`http://localhost:8000/${student._id}`, {
+                            method: "PUT",
+                            body: JSON.stringify({ _id: student._id, name: nameInput.value, age: ageInput.value }),
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                            
+                        });
+
+                        console.log(response)
+                        const responseJson = await response.json()
+                        console.log(responseJson, "success")
+                        
+
+                        // location.reload();
+                    } catch (e) {
+                        console.error("Error occurred", e.message)
+                    }
+
+
+                    Clickeble()
+                })
+
+
+                // DELETE
+
+                const deleteBtn = document.createElement("button")
+                deleteBtn.className = "deletebtn"
+
+                deleteBtn.addEventListener("click", async function click() {
+                    // Get the student object
+                    const student = result[i]
+                    console.log(student._id)
+
+                    // Get the references to the inputs in the form
+                    try {
+                        const response = await fetch(`http://localhost:8000/${student._id}`, {
+                            method: "DELETE",
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        });
+
+                        console.log(response)
+                        const responseJson = await response.json()
+                        console.log(responseJson)
+
+                        // location.reload();
+                    } catch (e) {
+                        console.error("Error occurred", e.message)
+                    }
+
+                })
                 id.textContent = result[i]._id
                 name.textContent = result[i].name
                 age.textContent = result[i].age
                 row.appendChild(id)
                 row.appendChild(name)
                 row.appendChild(age)
+                row.appendChild(updateBtn)
+                row.appendChild(deleteBtn)
                 tbody.appendChild(row)
                 console.log(row)
             }
@@ -106,6 +190,48 @@
             table.appendChild(thead)
             document.body.appendChild(table)
         }
+        function Clickeble() {
+            const forms = document.getElementById("main")
+            forms.style.display = "block"
+        }
+        function cancel() {
+
+            const forms = document.getElementById("main")
+            forms.style.display = "none"
+        }
+
+
+        // crete/add 
+
+        const form = document.getElementById("form")
+        form.addEventListener("submit", async function (e) {
+            e.preventDefault()
+            // console.log(form.getElementsByTagName)
+            const inputs = form.getElementsByTagName("input")
+            console.log(inputs)
+            const nameInput = inputs[0]
+            const ageInput = inputs[1]
+
+            try {
+                const response = await fetch("http://localhost:8000", {
+                    method: "POST",
+                    body: JSON.stringify({ name: nameInput.value, age: ageInput.value }),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                console.log(response)
+                const responseJson = await response.json()
+                console.log(responseJson)
+
+                // location.reload();
+            } catch (e) {
+                console.error("Error occurred", e.message)
+            }
+
+        })
+
     </script>
 
 </body>
