@@ -62,10 +62,10 @@
     <div>
         <button onclick="Clickeble()">add new student</button>
         <div id="main">
-            <form action="http://localhost:8000" method="post" id="form">
+            <form action="http://localhost:8000"  method="post" id="form">
                 <input type="text" name="name" id="name">
                 <input type="number" name="age" id="age">
-                <input type="submit" name="save">
+                <input type="submit" name="save" id="submit">
             </form>
             <button onclick="cancel()" id="cancelbtn">Cancel</button>
         </div>
@@ -120,29 +120,27 @@
                     const ageInput = inputs[1]
                     nameInput.value = student.name;
                     ageInput.value = student.age;
+                    const inputSub = document.getElementById("submit")
+                    inputSub.addEventListener("click",(e)=>{
                     
-                    try {
-                        const response = await fetch(`http://localhost:8000/${student._id}`, {
+                    fetch(`http://localhost:8000/${student._id}`, {
                             method: "PUT",
                             body: JSON.stringify({ _id: student._id, name: nameInput.value, age: ageInput.value }),
                             headers: {
-                                'Content-Type': 'application/json'
+                                'Content-Type': 'application/json'  
                             }
                             
-                        });
-
-                        console.log(response)
-                        const responseJson = await response.json()
-                        console.log(responseJson, "success")
-                        
-
+                        }).then((resData)=>{
+                            console.log("successs")
+                        })
+                        // console.log(response)
+                        // const responseJson = await response.json()
+                        // console.log(responseJson, "success")
                         // location.reload();
-                    } catch (e) {
-                        console.error("Error occurred", e.message)
-                    }
-
-
+                   
+                })
                     Clickeble()
+
                 })
 
 
@@ -193,6 +191,9 @@
         function Clickeble() {
             const forms = document.getElementById("main")
             forms.style.display = "block"
+            forms.style.width = "50%"
+            forms.style.background = "rgba(0, 0, 0, 0.331)"
+
         }
         function cancel() {
 

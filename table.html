@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #updateBlock {
+            display: none;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.331);
+            /* display: flex; */
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+
+
+        }
+
+        #updateBlock input {
+            height: 30px;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        #updateBlock div {
+            text-align: center;
+        }
+
+        #updateBlock div button {
+            height: 30px;
+            background-color: blue;
+            color: white;
+            border: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="tableBlock">
+        <table id="table" border="1px" width="100%">
+
+        </table>
+
+    </div>
+    <div id="updateBlock">
+        <div style="width:50%;">
+            <input type="text" name="name" id="name">
+            <br>
+            <input type="number" name="age" id="age">
+            <br>
+            <button id="updateButton">update</button>
+            <button id="close">close</button>
+
+        </div>
+    </div>
+
+
+    <script>
+
+        let table = document.getElementById("table")
+        console.log(table)
+        var userData
+
+
+
+        function tableCreation() {
+            table.innerHTML = ""
+            fetch("http://localhost:8000").then((user) => {
+                return user.json()
+            }).then((userData) => {
+                userData.map((singleUser) => {
+                    let tr = document.createElement("tr")
+                    let td = document.createElement("td")
+                    td.innerHTML = singleUser._id
+                    let td1 = document.createElement("td")
+                    td1.innerHTML = singleUser.name
+                    let td2 = document.createElement("td")
+                    td2.innerHTML = singleUser.age
+                    let td3 = document.createElement("td")
+                    // td3.innerHTML=`<button  onclick="editUser(${singleUser})">Edit</button><button>delete</button>`
+                    let button = document.createElement("button")
+                    button.innerHTML = "edit"
+                    button.addEventListener("click", () => editUser(singleUser));
+                    td3.appendChild(button)
+
+                    tr.appendChild(td)
+                    tr.appendChild(td1)
+                    tr.appendChild(td2)
+                    tr.appendChild(td3)
+
+
+                    table.appendChild(tr)
+
+                })
+            })
+
+            function editUser(data) {
+                let block = document.getElementById("updateBlock")
+                block.style.display = "flex"
+                let inputName = document.getElementById("name")
+                let inputAge = document.getElementById("age")
+                inputAge.value = data.age
+                inputName.value = data.name
+                console.log(data, "hiii")
+                userData = data
+
+
+                let button = document.getElementById("updateButton")
+
+                button.addEventListener("click", (e) => {
+                    console.log(userData)
+                    console.log(inputName.value)
+                    console.log(inputAge.value)
+                    console.log(inputName.value)
+                    fetch(`http://localhost:8000/${userData._id}`, {
+                        method: "PUT",
+                        body: JSON.stringify({ _id: userData._id, name: inputName.value, age: inputAge.value }),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+
+                    }).then((resData) => {
+                        console.log("successs")
+                        document.getElementById("updateBlock").style.display = "none"
+                        tableCreation()
+
+                    })
+
+                })
+
+
+                console.log(data)
+            }
+            document.getElementById("close").addEventListener("click", () => {
+                document.getElementById("updateBlock").style.display = "none"
+            })
+        }
+        tableCreation()
+    </script>
+</body>
+
+</html>
