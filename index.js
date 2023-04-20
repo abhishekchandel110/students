@@ -72,15 +72,6 @@ app.put("/:id", async function (req, res) {
         student.age = req.body.age
         await student.save()
         res.json({ "message": "success" })
-
-        // Students.findByIdAndUpdate({ _id: id},
-        //     {
-        //         name: req.body.name,
-        //         age: req.body.age
-        //     }
-        //     ).then((resdata)=>{
-        //         res.json("success")
-        //     });
     } catch (e) {
     console.log(e);
     }

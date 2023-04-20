@@ -42,6 +42,10 @@
             padding: 6px;
         }
 
+        .tableRow {
+            border: 1px solid;
+        }
+
         .deletebtn {
             background: url(./delete_con.jpg);
             background-size: fit;
@@ -62,7 +66,7 @@
     <div>
         <button onclick="Clickeble()">add new student</button>
         <div id="main">
-            <form action="http://localhost:8000"  method="post" id="form">
+            <form action="http://localhost:8000" method="post" id="form">
                 <input type="text" name="name" id="name">
                 <input type="number" name="age" id="age">
                 <input type="submit" name="save" id="submit">
@@ -82,6 +86,7 @@
 
             console.log(result)
             const table = document.createElement("table")
+            table.id = "createTable"
             const thead = document.createElement("thead")
             const tbody = document.createElement("tbody")
             const rows = document.createElement("tr")
@@ -106,7 +111,7 @@
 
 
                 // update/edit 
-                
+
                 const updateBtn = document.createElement("button")
                 updateBtn.className = "editbutton"
 
@@ -121,24 +126,30 @@
                     nameInput.value = student.name;
                     ageInput.value = student.age;
                     const inputSub = document.getElementById("submit")
-                    inputSub.addEventListener("click",(e)=>{
-                    
-                    fetch(`http://localhost:8000/${student._id}`, {
+                    inputSub.addEventListener("click", (e) => {
+                        e.preventDefault()
+                        fetch(`http://localhost:8000/${student._id}`, {
                             method: "PUT",
                             body: JSON.stringify({ _id: student._id, name: nameInput.value, age: ageInput.value }),
                             headers: {
-                                'Content-Type': 'application/json'  
+                                'Content-Type': 'application/json'
                             }
-                            
-                        }).then((resData)=>{
+
+                        }).then((resData) => {
                             console.log("successs")
+                            console.log(i, result[i])
+                            const trs = table.getElementsByTagName('tr')
+                            const targetRow = trs[i]
+                            const tds = targetRow.getElementsByTagName('td')
+                            tds[1].textContent = nameInput.value;
+                            tds[2].textContent = ageInput.value;
                         })
                         // console.log(response)
                         // const responseJson = await response.json()
                         // console.log(responseJson, "success")
                         // location.reload();
-                   
-                })
+
+                    })
                     Clickeble()
 
                 })
@@ -155,22 +166,33 @@
                     console.log(student._id)
 
                     // Get the references to the inputs in the form
-                    try {
-                        const response = await fetch(`http://localhost:8000/${student._id}`, {
-                            method: "DELETE",
-                            headers: {
-                                'Content-Type': 'application/json'
-                            }
-                        });
 
-                        console.log(response)
-                        const responseJson = await response.json()
-                        console.log(responseJson)
 
-                        // location.reload();
-                    } catch (e) {
-                        console.error("Error occurred", e.message)
+                    if (window.confirm("Do you really want to delete?")) {
+
+                        try {
+                            const response = await fetch(`http://localhost:8000/${student._id}`, {
+                                method: "DELETE",
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                }
+                            });
+
+                            console.log(response)
+                            const responseJson = await response.json()
+                            console.log(responseJson)
+                            const trs = table.getElementsByTagName('tr')
+                            const targetRow = trs[i]
+                            targetRow.remove()
+                        } catch (e) {
+                            console.error("Error occurred", e.message)
+                        }
+
+                    } else {
+                        console.log("can not delete")
+
                     }
+                    // table.deleteRow(i)
 
                 })
                 id.textContent = result[i]._id
@@ -220,11 +242,41 @@
                     headers: {
                         'Content-Type': 'application/json'
                     }
-                });
 
+                });
                 console.log(response)
                 const responseJson = await response.json()
                 console.log(responseJson)
+                const showTable = document.getElementById("createTable")
+                const rows = document.createElement("tr")
+                rows.className = "tableRow"
+                const td = document.createElement("td")
+                const td1 = document.createElement("td")
+                const td2 = document.createElement("td")
+                const updateBtn = document.createElement("button")
+                updateBtn.className = "editbutton"
+                const deleteBtn = document.createElement("button")
+                deleteBtn.className = "deletebtn"
+
+                const trs = table.getElementsByTagName('tr')
+                const targetRow = trs[i]
+                const tds = targetRow.getElementsByTagName('td')
+                tds[1].textContent = nameInput.value;
+                tds[2].textContent = ageInput.value;
+
+                td.textContent = responseJson._id
+                td1.textContent = nameInput.value
+                td2.textContent = ageInput.value
+                rows.appendChild(td)
+                rows.appendChild(td1)
+                rows.appendChild(td2)
+                rows.appendChild(updateBtn)
+                rows.appendChild(deleteBtn)
+
+                showTable.appendChild(rows)
+                console.log(showTable, "hi")
+
+
 
                 // location.reload();
             } catch (e) {
