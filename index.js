@@ -92,3 +92,7 @@ app.delete("/:id", async function (req, res) {
 app.listen(8000, function () {
     console.log("start");
 })
+
+
+
+//$env:CONNECTION_STRING = "mongodb+srv://narendrapatidar842:Pn%4096307@cluster0.awejtj4.mongodb.net/test"
