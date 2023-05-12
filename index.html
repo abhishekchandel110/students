@@ -77,13 +77,9 @@
     </div>
 
     <script>
-
-
-
         window.onload = async function () {
             const data = await fetch("http://localhost:8000")
             const result = await data.json()
-
             console.log(result)
             const table = document.createElement("table")
             table.id = "createTable"
@@ -109,16 +105,13 @@
                 const name = document.createElement("td")
                 const age = document.createElement("td")
 
-
                 // update/edit 
 
                 const updateBtn = document.createElement("button")
                 updateBtn.className = "editbutton"
-
                 updateBtn.addEventListener("click", async function click() {
                     // Get the student object
                     const student = result[i]
-
                     // Get the references to the inputs in the form
                     const inputs = form.getElementsByTagName("input")
                     const nameInput = inputs[0]
@@ -134,7 +127,6 @@
                             headers: {
                                 'Content-Type': 'application/json'
                             }
-
                         }).then((resData) => {
                             console.log("successs")
                             console.log(i, result[i])
@@ -144,32 +136,20 @@
                             tds[1].textContent = nameInput.value;
                             tds[2].textContent = ageInput.value;
                         })
-                        // console.log(response)
-                        // const responseJson = await response.json()
-                        // console.log(responseJson, "success")
-                        // location.reload();
-
                     })
                     Clickeble()
-
                 })
 
-
                 // DELETE
-
                 const deleteBtn = document.createElement("button")
                 deleteBtn.className = "deletebtn"
-
                 deleteBtn.addEventListener("click", async function click() {
                     // Get the student object
                     const student = result[i]
                     console.log(student._id)
 
                     // Get the references to the inputs in the form
-
-
                     if (window.confirm("Do you really want to delete?")) {
-
                         try {
                             const response = await fetch(`http://localhost:8000/${student._id}`, {
                                 method: "DELETE",
@@ -177,7 +157,6 @@
                                     'Content-Type': 'application/json'
                                 }
                             });
-
                             console.log(response)
                             const responseJson = await response.json()
                             console.log(responseJson)
@@ -187,13 +166,10 @@
                         } catch (e) {
                             console.error("Error occurred", e.message)
                         }
-
                     } else {
                         console.log("can not delete")
-
                     }
                     // table.deleteRow(i)
-
                 })
                 id.textContent = result[i]._id
                 name.textContent = result[i].name
@@ -206,7 +182,7 @@
                 tbody.appendChild(row)
                 console.log(row)
             }
-            table.appendChild(tbody)
+            table.appendChild(tbody)    
             table.appendChild(thead)
             document.body.appendChild(table)
         }
@@ -215,17 +191,13 @@
             forms.style.display = "block"
             forms.style.width = "50%"
             forms.style.background = "rgba(0, 0, 0, 0.331)"
-
         }
         function cancel() {
-
             const forms = document.getElementById("main")
             forms.style.display = "none"
         }
 
-
         // crete/add 
-
         const form = document.getElementById("form")
         form.addEventListener("submit", async function (e) {
             e.preventDefault()
@@ -242,7 +214,6 @@
                     headers: {
                         'Content-Type': 'application/json'
                     }
-
                 });
                 console.log(response)
                 const responseJson = await response.json()
@@ -272,12 +243,8 @@
                 rows.appendChild(td2)
                 rows.appendChild(updateBtn)
                 rows.appendChild(deleteBtn)
-
                 showTable.appendChild(rows)
                 console.log(showTable, "hi")
-
-
-
                 // location.reload();
             } catch (e) {
                 console.error("Error occurred", e.message)

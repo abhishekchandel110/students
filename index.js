@@ -16,8 +16,6 @@ app.use(bodyparser.json())
 app.use(cors())
 
 app.get("/", async function (req, res) {
-
-
     try {
         const student = await Students.find({})
         res.send(student)
