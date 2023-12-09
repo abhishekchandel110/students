@@ -3,10 +3,7 @@ const bodyparser = require("body-parser")
 const mongoose = require("mongoose")
 
 const cors = require('cors')
-
 const Students = require("./student.js")
-// const username = "kanhaiyapatidar94"
-// const password = "kp@12345"
 
 mongoose.connect(process.env.CONNECTION_STRING)
 
